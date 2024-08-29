@@ -29,14 +29,28 @@ export const parseUserMetadata = (content: string): UserMetadata => {
   }
 };
 
+export const formatTimestamp = (timestamp: number): string => {
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+    timeZone: 'America/Los_Angeles'
+  }) + ' PST';
+};
+
 export const getEventTooltipContent = (event: NostrEvent): string => {
+  const formattedTime = formatTimestamp(event.created_at);
   switch (event.kind) {
     case 0:
       const metadata = parseUserMetadata(event.content);
-      return `User: ${metadata.name}\nAbout: ${metadata.about}`;
+      return `Last updated on ${formattedTime}\nUser: ${metadata.name}\nAbout: ${metadata.about}`;
     case 1:
-      return `Note: ${event.content.slice(0, 50)}${event.content.length > 50 ? '...' : ''}`;
+      return `Posted on ${formattedTime}\nNote: ${event.content.slice(0, 50)}${event.content.length > 50 ? '...' : ''}`;
     default:
-      return `Event: ${event.id}`;
+      return `Event: ${event.id}\nCreated at: ${formattedTime}`;
   }
 };
