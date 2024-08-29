@@ -1,17 +1,15 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { dummyData } from "../fixtures/dummy";
-import {
-  getEventColor,
-  getEventSize,
-  getEventTooltipContent,
-  parseUserMetadata,
-} from "../utils/nostrUtils";
+import { getEventColor, getEventSize } from "../utils/nostrUtils";
+import EventTooltip from "./EventTooltip";
 
 const NodeLinkVisualization: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const [tooltipEvent, setTooltipEvent] = useState<NostrEvent | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -66,32 +64,16 @@ const NodeLinkVisualization: React.FC = () => {
         d.type === "pubkey" ? "#FFA500" : getEventColor(d)
       );
 
-    // Create a tooltip
-    const tooltip = d3
-      .select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0)
-      .style("position", "absolute")
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "5px");
-
     // Add hover functionality
     node
       .on("mouseover", (event, d: any) => {
-        tooltip.transition().duration(200).style("opacity", 0.9);
-        const content =
-          d.type === "pubkey" ? `PubKey: ${d.id}` : getEventTooltipContent(d);
-        tooltip
-          .html(content)
-          .style("left", event.pageX + 10 + "px")
-          .style("top", event.pageY - 28 + "px");
+        if (d.type === "event") {
+          setTooltipEvent(d);
+          setTooltipPosition({ x: event.pageX, y: event.pageY });
+        }
       })
       .on("mouseout", () => {
-        tooltip.transition().duration(500).style("opacity", 0);
+        setTooltipEvent(null);
       });
 
     simulation.on("tick", () => {
@@ -105,7 +87,23 @@ const NodeLinkVisualization: React.FC = () => {
     });
   }, []);
 
-  return <svg ref={svgRef} style={{ background: "#1e1e1e" }}></svg>;
+  return (
+    <>
+      <svg ref={svgRef} style={{ background: "#1e1e1e" }}></svg>
+      {tooltipEvent && (
+        <div
+          style={{
+            position: "absolute",
+            left: `${tooltipPosition.x + 10}px`,
+            top: `${tooltipPosition.y - 10}px`,
+            zIndex: 1000,
+          }}
+        >
+          <EventTooltip event={tooltipEvent} />
+        </div>
+      )}
+    </>
+  );
 };
 
 export default NodeLinkVisualization;

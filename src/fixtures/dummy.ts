@@ -8,9 +8,9 @@ export const dummyData: { pubkeys: PubKey[]; events: NostrEvent[] } = {
     {
       kind: 0,
       content: JSON.stringify({
-        name: "Alice",
+        name: "AceaSpades",
         about: "I love Nostr!",
-        picture: "https://example.com/alice.jpg"
+        picture: "https://aceaspades.com/images/acea-profile.png"
       }),
       created_at: 1677825600,
       id: "event1",
