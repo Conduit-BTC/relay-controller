@@ -168,7 +168,7 @@ class NostrConnection {
 const relayUrls = [
   'wss://nos.lol',
   'wss://relay.snort.social',
-  'wss://relay.damus.io'
+  // 'wss://relay.damus.io'
 ];
 
 export const nostrConnection = new NostrConnection(relayUrls);
