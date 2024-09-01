@@ -11,14 +11,6 @@ const RELAYS = [
   "wss://relay.nostr.band",
 ];
 
-interface EventNode {
-  id: string;
-  kind: number;
-  content: string;
-  created_at: number;
-  pubkey: string;
-}
-
 const colorSelector = (kind: number): string => {
   const hue = (kind * 137.5) % 360;
   return `hsl(${hue}, 70%, 50%)`;

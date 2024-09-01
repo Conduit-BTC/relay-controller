@@ -13,6 +13,14 @@ declare global {
     sig: string;
   }
 
+  interface EventNode {
+    id: string;
+    kind: number;
+    content: string;
+    created_at: number;
+    pubkey: string;
+  }
+
   interface UserMetadata {
     name: string;
     about: string;

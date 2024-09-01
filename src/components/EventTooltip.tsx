@@ -3,7 +3,7 @@ import Image from "next/image";
 import { parseUserMetadata, formatTimestamp } from "../utils/nostrUtils";
 
 interface EventTooltipProps {
-  event: NostrEvent;
+  event: EventNode;
 }
 
 const EventTooltip: React.FC<EventTooltipProps> = ({ event }) => {
