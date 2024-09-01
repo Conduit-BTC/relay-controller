@@ -16,4 +16,4 @@ ENV SERVE_DIR=/app/dist
 
 COPY ./Caddyfile /etc/caddy/Caddyfile
 
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "Caddyfile"]
