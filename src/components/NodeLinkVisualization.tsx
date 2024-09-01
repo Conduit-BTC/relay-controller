@@ -6,21 +6,15 @@ import { getEventColor, getEventSize } from "../utils/nostrUtils";
 import EventTooltip from "./EventTooltip";
 import nostrConnection from "../utils/nostrConnection";
 
-interface Link {
-  source: string;
-  target: string;
-}
-
-interface EventWithRelay extends NostrEvent {
-  relayUrl: string;
-}
-
 interface NodeLinkVisualizationProps {
   maxKind0Events: number;
   maxKind1Events: number;
 }
 
-const NodeLinkVisualization: React.FC<NodeLinkVisualizationProps> = ({ maxKind0Events, maxKind1Events }) => {
+const NodeLinkVisualization: React.FC<NodeLinkVisualizationProps> = ({
+  maxKind0Events,
+  maxKind1Events,
+}) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltipEvents, setTooltipEvents] = useState<EventWithRelay[]>([]);
   const [events, setEvents] = useState<EventWithRelay[]>([]);
@@ -138,7 +132,6 @@ const NodeLinkVisualization: React.FC<NodeLinkVisualizationProps> = ({ maxKind0E
         });
     });
 
-    // Filter out links with missing nodes
     const validLinks = links.filter(
       (link) => nodeMap.has(link.source) && nodeMap.has(link.target)
     );
@@ -172,7 +165,6 @@ const NodeLinkVisualization: React.FC<NodeLinkVisualizationProps> = ({ maxKind0E
           d.type === "profile" ? "#FFA500" : getEventColor(d)
         );
 
-      // Add hover functionality
       node
         .on("mouseover", (event, d: any) => {
           if (!showAllTooltips) {
@@ -185,7 +177,6 @@ const NodeLinkVisualization: React.FC<NodeLinkVisualizationProps> = ({ maxKind0E
           }
         });
 
-      // Add zoom behavior
       const zoom = d3
         .zoom()
         .scaleExtent([0.1, 10])
@@ -205,7 +196,6 @@ const NodeLinkVisualization: React.FC<NodeLinkVisualizationProps> = ({ maxKind0E
         node.attr("cx", (d: any) => d.x).attr("cy", (d: any) => d.y);
       });
 
-      // Update tooltips when showAllTooltips changes
       if (showAllTooltips) {
         setTooltipEvents(nodes as EventWithRelay[]);
       } else {

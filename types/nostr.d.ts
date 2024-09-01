@@ -1,9 +1,9 @@
 declare global {
-  export interface PubKey {
+  interface PubKey {
     id: string;
   }
 
-  export interface NostrEvent {
+  interface NostrEvent {
     kind: number;
     content: string;
     created_at: number;
@@ -13,11 +13,21 @@ declare global {
     sig: string;
   }
 
-  export interface UserMetadata {
+  interface UserMetadata {
     name: string;
     about: string;
     picture: string;
   }
-}
 
+  interface Link {
+    source: string;
+    target: string;
+  }
+
+  interface EventWithRelay extends NostrEvent {
+    relayUrl: string;
+  }
+
+
+}
 export { };
