@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Next.js build output
+.next
+out
+
+# Environment files
+.env*.local
+
+# Version control
+.git
+.gitignore
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor folders
+.vscode
+.idea
+
+# Test coverage
+coverage
+
+# Misc
+*.log
+*.bak
+*.tmp

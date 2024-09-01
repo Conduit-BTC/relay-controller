@@ -1,0 +1,16 @@
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile-NextJS
+    ports:
+      - "3000:3000"
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile-Caddy
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - NEXT_SERVER=nextjs
