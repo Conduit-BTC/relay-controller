@@ -1,27 +1,28 @@
-# Global options
 {
-    admin off
+    # Enable admin API for debugging (be cautious in production)
+    admin 0.0.0.0:2019
+
+    # Disable automatic HTTPS (usually handled by external services)
     auto_https off
+
+    # Enhanced logging for debugging
     log {
-        format json
+        format console
+        level DEBUG
     }
+
+    # Trust private ranges as proxies (useful in container environments)
     servers {
         trusted_proxies static private_ranges
     }
 }
 
 :{$PORT} {
+    # Set the root directory
     root * {$SERVE_DIR}
 
-    # Handle .well-known directory
-    handle /.well-known/* {
-        uri strip_prefix /.well-known
-        root * {$SERVE_DIR}/.well-known
-        file_server
-    }
-
-    # Ensure correct MIME type for nostr.json
-    header /nostr.json Content-Type application/json
+    # Log all requests for debugging
+    log
 
     # Enable compression
     encode gzip zstd
@@ -41,21 +42,17 @@
         header Cache-Control "public, max-age=3600"
     }
 
-    # Handle API routes
-    handle /api/* {
-        reverse_proxy localhost:3000
-    }
-
-    # Handle all other requests
+    # Handle API routes and all other requests
     handle {
-        try_files {path} {path}/index.html
-        reverse_proxy localhost:3000
+        reverse_proxy {$NEXT_SERVER:http://localhost:3000} {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
     }
 
     # Custom error handling
     handle_errors {
-        rewrite * /{http.error.status_code}.html
-        file_server
-        reverse_proxy localhost:3000
+        respond "{http.error.status_code} {http.error.message}"
     }
 }
