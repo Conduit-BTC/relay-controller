@@ -1,63 +1,61 @@
 # Global options
 {
-    # Disable the admin API as it's not needed in most environments
     admin off
-
-    # Disable automatic HTTPS as it's often handled by external services
     auto_https off
-
-    # Configure logging in JSON format for better parsing
     log {
         format json
     }
-
-    # Trust private ranges as proxies, useful in container environments
     servers {
         trusted_proxies static private_ranges
     }
 }
 
-# Main server block, using the PORT environment variable
 :{$PORT} {
-    # Set the root directory using an environment variable for flexibility
     root * {$SERVE_DIR}
 
-    # Handle requests to the .well-known directory
-    @wellknown {
-        path /.well-known/*
-    }
-    handle @wellknown {
-        # Strip the /.well-known prefix from the URI
+    # Handle .well-known directory
+    handle /.well-known/* {
         uri strip_prefix /.well-known
-        # Set the root specifically for .well-known requests
         root * {$SERVE_DIR}/.well-known
-        # Serve files from this directory
         file_server
     }
 
     # Ensure correct MIME type for nostr.json
     header /nostr.json Content-Type application/json
 
-    # Enable Gzip and Zstandard compression for better performance
+    # Enable compression
     encode gzip zstd
 
-    # Define static file types and set caching headers
+    # Handle Next.js _next directory (static files)
+    handle /_next/* {
+        file_server
+    }
+
+    # Handle static files
     @static {
         file
         path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2 *.json
     }
-    header @static Cache-Control "public, max-age=3600"
+    handle @static {
+        file_server
+        header Cache-Control "public, max-age=3600"
+    }
 
-    # Support for Single Page Applications (SPA) routing
-    try_files {path} /index.html
+    # Handle API routes
+    handle /api/* {
+        reverse_proxy localhost:3000
+    }
+
+    # Handle all other requests
+    handle {
+        try_files {path} {path}/index.html
+        reverse_proxy localhost:3000
+    }
 
     # Custom error handling
     handle_errors {
-        # Rewrite all errors to the main index.html file
-        rewrite * /index.html
+        rewrite * /{http.error.status_code}.html
         file_server
+        reverse_proxy localhost:3000
     }
-
-    # Enable static file serving for all other requests
-    file_server
 }
