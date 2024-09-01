@@ -49,12 +49,12 @@
     header @static Cache-Control "public, max-age=3600"
 
     # Support for Single Page Applications (SPA) routing
-    try_files {path}/index.html
+    try_files {path} /index.html
 
     # Custom error handling
     handle_errors {
-        # Rewrite to the appropriate error page
-        rewrite * /404.html
+        # Rewrite all errors to the main index.html file
+        rewrite * /index.html
         file_server
     }
 
